@@ -1,5 +1,7 @@
 # om-state-stream
-Port of react-state-stream to Om
+_Disclaimer: This is a work in progress and isn't well documented._
+
+Port of react-state-stream to Om.
 
 # Build
 ```

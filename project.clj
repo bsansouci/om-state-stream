@@ -9,7 +9,7 @@
 
   :plugins [[lein-cljsbuild "1.0.4"]]
 
-  :source-paths ["src" "target/classes"]
+  :source-paths ["src"]
 
   :clean-targets ["out/om_state_stream" "om_state_stream.js"]
 

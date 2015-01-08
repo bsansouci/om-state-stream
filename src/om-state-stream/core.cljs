@@ -96,7 +96,10 @@
 
 
 
-
+;; Example 1
+;; ----------------------------------------------------------------------------
+;; This first example shows how a state-stream description "maps" onto the app
+;; (formally called props in React).
 (defn child-style [deg]
   #js {:border "1px solid gray"
        :borderRadius 20
@@ -153,6 +156,9 @@
 (defn parent-stream-description2 [cur app]
     (map (fn [x] {:deg (* 4 (:deg x))}) (parent-stream-description cur app)))
 
+
+;; Notie how easy it is to update the state-stream simply by changing the app
+;; cursor.
 (defn parent-component [app owner]
   (reify
     om/IInitState
@@ -161,9 +167,9 @@
     om/IDidMount
     (did-mount [this]
       (start-state-stream app owner))
-    ;om/IWillReceiveProps ;; this is also not needed
-    ;(will-receive-props [this next-props]
-    ;  (update-on-app-change next-props app owner))
+    om/IWillReceiveProps ;; this is also not needed because this component doesnt receive props
+    (will-receive-props [this next-props]
+      (update-on-app-change next-props app owner))
     om/IRenderState
     (render-state [this state]
       (let [deg (:deg (get-state-from-stream state))]
@@ -179,6 +185,10 @@
   {:target (. js/document (getElementById "app1"))})
 
 
+
+;; Example 2
+;; ----------------------------------------------------------------------------
+;;
 (defn app2-style [x top]
   #js {:border "1px solid gray"
        :borderRadius 10
