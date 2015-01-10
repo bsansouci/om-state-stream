@@ -200,13 +200,13 @@
        :transform (str "translate3d(" x "px,0,0)")})
 
 (defn app2-stream-description [cur app]
-  (let [[final-x1 final-x2 :as final-state] (cond (:going-left app) [50 400] :else [300 100])
-        duration 1500
+  (let [[final-x1 final-x2 :as final-state] (if (:going-left app) [50 400] [300 50])
+        duration 1000
         frame-count (to-frame-count duration)
         [cur-x1 cur-x2] (:block-x cur)]
     (concat (map (fn [t]
-                   {:block-x [(ease-in-out-quad t cur-x1 final-x1 duration)
-                              (ease-out-bounce t cur-x2 final-x2 duration)]})
+                   {:block-x [((if (:ease app) ease-in-out-quad ease-out-bounce) t cur-x1 final-x1 duration)
+                              ((if (:ease app) ease-in-out-quad ease-out-bounce) t cur-x2 final-x2 duration)]})
                  (take frame-count (time-stream)))
             (map (fn [_]
                    {:block-x final-state})
@@ -227,12 +227,18 @@
     (render-state [this state]
       (let [[block-x1 block-x2] (:block-x (get-state-from-stream state))]
         (dom/div #js {:style #js {:height 120}}
-          (dom/button #js {:onClick #(om/update! app :going-left (not (:going-left app)))} "Click")
+          (dom/br nil)
+          (dom/br nil)
+          (dom/br nil)
+          (dom/button #js {:onClick #(om/update! app :going-left (not (:going-left app)))} "Swap!")
+          (dom/br nil)
+          (dom/button #js {:onClick #(om/update! app :ease (not (:ease app)))} "Change easing function")
           (dom/div #js {:style (app2-style block-x1 10)})
           (dom/div #js {:style (app2-style block-x2 60)}))))))
 
 (def parent-state2
-  (atom {:going-left false}))
+  (atom {:going-left false
+         :ease false}))
 
 (om/root app2-component parent-state2
   {:target (. js/document (getElementById "app2"))})
